@@ -15,7 +15,7 @@ and update the access control lists (ACLs) for buckets and objects.
 
 Add the following dependency to your `project.clj` file:
 
-    [clj-aws-s3 "0.3.10"]
+    [com.curiosity/clj-aws-s3 "0.4.0"]
 
 ## Example
 
@@ -24,13 +24,15 @@ Add the following dependency to your `project.clj` file:
 
 (def cred {:access-key "...", :secret-key "..."})
 
-(s3/create-bucket cred "my-bucket")
+(def client (s3/s3-client cred))
 
-(s3/put-object cred "my-bucket" "some-key" "some-value")
+(s3/create-bucket client "my-bucket")
 
-(s3/update-object-acl cred "my-bucket" "some-key" (s3/grant :all-users :read))
+(s3/put-object client "my-bucket" "some-key" "some-value")
 
-(println (slurp (:content (s3/get-object cred "my-bucket" "some-key"))))
+(s3/update-object-acl client "my-bucket" "some-key" (s3/grant :all-users :read))
+
+(println (slurp (:content (s3/get-object client "my-bucket" "some-key"))))
 ```
 
 ## Documentation
@@ -40,5 +42,6 @@ Add the following dependency to your `project.clj` file:
 ## License
 
 Copyright © 2014 James Reeves
+Copyright © 2015 Beacon Solutions, Inc.
 
 Distributed under the Eclipse Public License, the same as Clojure.
