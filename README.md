@@ -1,4 +1,4 @@
-# clj-aws-s3
+# clj-aws-s3 (fork)
 
 A Clojure library for accessing Amazon S3, based on the official AWS
 Java SDK.
@@ -10,6 +10,10 @@ and protocols for uploading different types of data.
 Currently the library supports functions to create, list and delete
 buckets, to list, get, and put objects and their metadata, and to get
 and update the access control lists (ACLs) for buckets and objects.
+
+This is a fork that provides explicit passing of the client object. The
+original project is at https://github.com/weavejester/clj-aws-s3. Please
+report any bugs to this fork's issue tracker, I assume any bugs are mine.
 
 ## Install
 
