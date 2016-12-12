@@ -13,6 +13,7 @@
             [clojure.walk :as walk])
   (:import com.amazonaws.auth.BasicAWSCredentials
            com.amazonaws.auth.BasicSessionCredentials
+           com.amazonaws.auth.DefaultAWSCredentialsProviderChain
            com.amazonaws.services.s3.AmazonS3Client
            com.amazonaws.AmazonServiceException
            com.amazonaws.ClientConfiguration
@@ -49,37 +50,46 @@
            java.nio.charset.Charset))
 
 (defn ^{:tag AmazonS3Client} s3-client
-  [cred]
-  (let [client-configuration (ClientConfiguration.)]
-    (when-let [conn-timeout (:conn-timeout cred)]
-      (.setConnectionTimeout client-configuration conn-timeout))
-    (when-let [socket-timeout (:socket-timeout cred)]
-      (.setSocketTimeout client-configuration socket-timeout))
-    (when-let [max-retries (:max-retries cred)]
-      (.setMaxErrorRetry client-configuration max-retries))
-    (when-let [max-conns (:max-conns cred)]
-      (.setMaxConnections client-configuration max-conns))
-    (when-let [proxy-host (get-in cred [:proxy :host])]
-      (.setProxyHost client-configuration proxy-host))
-    (when-let [proxy-port (get-in cred [:proxy :port])]
-      (.setProxyPort client-configuration proxy-port))
-    (when-let [proxy-user (get-in cred [:proxy :user])]
-      (.setProxyUsername client-configuration proxy-user))
-    (when-let [proxy-pass (get-in cred [:proxy :password])]
-      (.setProxyPassword client-configuration proxy-pass))
-    (when-let [proxy-domain (get-in cred [:proxy :domain])]
-      (.setProxyDomain client-configuration proxy-domain))
-    (when-let [proxy-workstation (get-in cred [:proxy :workstation])]
-      (.setProxyWorkstation client-configuration proxy-workstation))
-    (let [aws-creds
-          (if (:token cred)
-            (BasicSessionCredentials. (:access-key cred) (:secret-key cred) (:token cred))
-            (BasicAWSCredentials. (:access-key cred) (:secret-key cred)))
-
-          client (AmazonS3Client. aws-creds client-configuration)]
-      (when-let [endpoint (:endpoint cred)]
-        (.setEndpoint client endpoint))
-      client)))
+  "Initializes an s3-client. If no credentials are provided, DefaultAWSCredentialsProviderChain is
+  used to search the default environment variables, properties, credentials files, and instance
+  profile credentials."
+  ([]
+   (s3-client nil))
+  ([cred]
+   (let [client-configuration (ClientConfiguration.)]
+     (when-let [conn-timeout (:conn-timeout cred)]
+       (.setConnectionTimeout client-configuration conn-timeout))
+     (when-let [socket-timeout (:socket-timeout cred)]
+       (.setSocketTimeout client-configuration socket-timeout))
+     (when-let [max-retries (:max-retries cred)]
+       (.setMaxErrorRetry client-configuration max-retries))
+     (when-let [max-conns (:max-conns cred)]
+       (.setMaxConnections client-configuration max-conns))
+     (when-let [proxy-host (get-in cred [:proxy :host])]
+       (.setProxyHost client-configuration proxy-host))
+     (when-let [proxy-port (get-in cred [:proxy :port])]
+       (.setProxyPort client-configuration proxy-port))
+     (when-let [proxy-user (get-in cred [:proxy :user])]
+       (.setProxyUsername client-configuration proxy-user))
+     (when-let [proxy-pass (get-in cred [:proxy :password])]
+       (.setProxyPassword client-configuration proxy-pass))
+     (when-let [proxy-domain (get-in cred [:proxy :domain])]
+       (.setProxyDomain client-configuration proxy-domain))
+     (when-let [proxy-workstation (get-in cred [:proxy :workstation])]
+       (.setProxyWorkstation client-configuration proxy-workstation))
+     (let [aws-creds
+           (cond
+             (nil? cred) (-> (DefaultAWSCredentialsProviderChain/getInstance)
+                             .getCredentials)
+             (:token cred) (BasicSessionCredentials. (:access-key cred) (:secret-key cred) (:token cred))
+             (and (:access-key cred)
+                  (:secret-key cred)) (BasicAWSCredentials. (:access-key cred) (:secret-key cred))
+             :else (throw (ex-info "Misconfigured s3-client AWS credentials!"
+                                   {:credentials cred})))
+           client (AmazonS3Client. aws-creds client-configuration)]
+       (when-let [endpoint (:endpoint cred)]
+         (.setEndpoint client endpoint))
+       client))))
 
 (defprotocol ^{:no-doc true} Mappable
   "Convert a value into a Clojure map."
