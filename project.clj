@@ -1,4 +1,4 @@
-(defproject com.curiosity/clj-aws-s3 "0.4.0"
+(defproject com.curiosity/clj-aws-s3 "0.5.0"
   :description "Clojure Amazon S3 library (forked from weavejester/clj-aws-s3)"
   :url "https://github.com/CuriosityApp/clj-aws-s3"
   :license {:name "Eclipse Public License"
