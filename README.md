@@ -43,7 +43,7 @@ Add the following dependency to your `project.clj` file:
 
 ## Documentation
 
-* [API docs](http://curiosity.github.com/clj-aws-s3/)
+* [API docs](http://curiosity.github.io/clj-aws-s3/)
 
 ## License
 
