@@ -437,6 +437,22 @@
      client
     (map->ListObjectsRequest (merge {:bucket bucket} options)))))
 
+(defn object-seq
+  "Return a lazy sequence of objects in an S3 bucket. See list-objects for options.
+  If prefix-or-options is a string, imply {:prefix prefix-or-options}"
+  [client bucket & [prefix-or-options]]
+   (let [options (if (string? prefix-or-options)
+                   {:prefix prefix-or-options}
+                   prefix-or-options)
+         {:keys [truncated? next-marker objects]} (list-objects client bucket options)]
+     (if truncated?
+       (concat objects
+               (lazy-seq (object-seq client
+                                     bucket
+                                     (merge options
+                                            {:marker next-marker}))))
+       objects)))
+
 (defn delete-object
   "Delete an object from an S3 bucket."
   [client bucket key]
