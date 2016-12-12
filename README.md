@@ -19,7 +19,7 @@ report any bugs to this fork's issue tracker, I assume any bugs are mine.
 
 Add the following dependency to your `project.clj` file:
 
-    [com.curiosity/clj-aws-s3 "0.4.0"]
+    [com.curiosity/clj-aws-s3 "0.5.0"]
 
 ## Example
 
@@ -37,15 +37,17 @@ Add the following dependency to your `project.clj` file:
 (s3/update-object-acl client "my-bucket" "some-key" (s3/grant :all-users :read))
 
 (println (slurp (:content (s3/get-object client "my-bucket" "some-key"))))
+
+(map :key (object-seq client "my-bucket" "some/folder/prefix/"))
 ```
 
 ## Documentation
 
-* [API docs](http://weavejester.github.com/clj-aws-s3/)
+* [API docs](http://curiosity.github.com/clj-aws-s3/)
 
 ## License
 
 Copyright © 2014 James Reeves
-Copyright © 2015 Beacon Solutions, Inc.
+Copyright © 2015,2016 Beacon Solutions, Inc.
 
 Distributed under the Eclipse Public License, the same as Clojure.

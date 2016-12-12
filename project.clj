@@ -6,4 +6,4 @@
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [com.amazonaws/aws-java-sdk "1.11.65"]
                  [clj-time "0.12.2"]]
-  :plugins [[codox "0.10.2"]])
+  :plugins [[lein-codox "0.10.2"]])
