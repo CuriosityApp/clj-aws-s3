@@ -3,7 +3,7 @@
   :url "https://github.com/CuriosityApp/clj-aws-s3"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.5.1"]
-                 [com.amazonaws/aws-java-sdk "1.9.36"]
-                 [clj-time "0.8.0"]]
-  :plugins [[codox "0.8.10"]])
+  :dependencies [[org.clojure/clojure "1.8.0"]
+                 [com.amazonaws/aws-java-sdk "1.11.65"]
+                 [clj-time "0.12.2"]]
+  :plugins [[codox "0.10.2"]])
